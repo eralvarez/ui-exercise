@@ -23,3 +23,9 @@ Dev and Prod starts server at [localhost:3000](http://localhost:3000)
 # start prod mode
 > npm run start
 ```
+
+## How to test
+
+```shell
+> npm run test
+```
