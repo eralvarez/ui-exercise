@@ -8,7 +8,6 @@ import {
     ListItemIcon,
     ListItemText,
     Toolbar,
-    Typography,
 } from '@material-ui/core';
 import {
     Menu as MenuIcon,
@@ -83,6 +82,16 @@ const useStyles = makeStyles((theme: Theme) =>
                 display: 'none',
             },
         },
+        selectedSidebarItem: {
+            backgroundColor: '#fce8e6',
+            color: '#d93025',
+            '&:hover': {
+                backgroundColor: '#fce8e6',
+            }
+        },
+        selectedSidebarItemIcon: {
+            color: '#d93025',
+        }
     }),
 );
 
@@ -105,9 +114,12 @@ const Layout = (props: IProps) => {
                             edge="start">
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant="h6" noWrap aria-label="SalesLoft Gmail Logo">
-                            SL Gmail
-                        </Typography>
+                        <img
+                            src="/logo.png"
+                            alt="App logo"
+                            width={109}
+                            height={40}
+                        />
                     </div>
                     <div className={classes.mailSearchInputContainer}>
                         <MailSearchInput></MailSearchInput>
@@ -147,6 +159,10 @@ const Layout = (props: IProps) => {
                 <Toolbar />
                 <div className={classes.drawerContainer}>
                     <List>
+                        <ListItem button className={ classes.selectedSidebarItem }>
+                            <ListItemIcon><LabelIcon className={classes.selectedSidebarItemIcon}/></ListItemIcon>
+                            <ListItemText className={classes.tagName} primary={`All (9)`} />
+                        </ListItem>
                         {Object.keys(props.emailTags).map((tagName, tagNameIndex) => (
                             <ListItem button key={tagNameIndex}>
                                 <ListItemIcon><LabelIcon /></ListItemIcon>

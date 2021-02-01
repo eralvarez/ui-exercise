@@ -7,6 +7,8 @@ interface IEmail {
     body: string;
     tags: string[];
     date: string;
+    checked?: boolean;
+    dateString?: string;
 }
 
 interface IEmailTag {

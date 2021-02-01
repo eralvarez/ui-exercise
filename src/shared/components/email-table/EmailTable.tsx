@@ -15,8 +15,10 @@ import {
     StarBorder as StarBorderIcon,
     Refresh as RefreshIcon,
     MoreVert as MoreVertIcon,
+    Delete as DeleteIcon,
 } from '@material-ui/icons';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
+import { ChangeEvent, useState } from 'react';
 
 import {IEmail} from '@shared/services/email/email.service';
 
@@ -58,6 +60,9 @@ const useStyles = makeStyles((theme: Theme) =>
                 display: 'none',
             },
         },
+        selectedEmailRow: {
+            backgroundColor: '#c2dbff',
+        },
     }),
 );
 
@@ -67,7 +72,7 @@ interface IProps {
 
 const EmailTable = (props: IProps) => {
     const classes = useStyles();
-    const emails = props.emails.map((email) => {
+    let _emails = props.emails.map((email) => {
         const date = new Date(email.date);
         return {
             ...email,
@@ -75,12 +80,42 @@ const EmailTable = (props: IProps) => {
             dateString: date.toDateString(),
         };
     });
+    const [ emails, setEmails ] = useState<IEmail[]>(_emails)
+    const [ emailIsSelected, setEmailIsSelected ] = useState<boolean>(false);
 
     const removeHtmlTags = (html: string) => {
         const htmlRegex = new RegExp(/<.+?>/, 'g');
         const cleanHtml = html.replace(htmlRegex, '');
         return cleanHtml;
     };
+
+    const handleSelectAllEmails = (_event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+        setEmailIsSelected(checked);
+        setEmails(emails.map((email) => ({...email, checked})));
+    }
+
+    const handleCheckEmail = (checked: boolean, emailIndex: number) => {
+        let _emails = [...emails];
+        _emails[emailIndex].checked = checked;
+        setEmails(_emails);
+
+        if (checked) {
+            setEmailIsSelected(true);
+        } else {
+            const checkedEmails = emails.find((email) => email.checked === true);
+            if (checkedEmails) {
+                setEmailIsSelected(true);
+            } else {
+                setEmailIsSelected(false);
+            }
+        }
+    }
+
+    const handleDeleteEmailIcon = () => {
+        let _emails = [...emails].filter((email) => !email.checked);
+        setEmails(_emails);
+        setEmailIsSelected(false);
+    }
 
     return (
         <TableContainer component={Paper}>
@@ -91,25 +126,39 @@ const EmailTable = (props: IProps) => {
                             <Checkbox
                                 className={classes.checkbox}
                                 color="primary"
+                                onChange={handleSelectAllEmails}
                             />
-                            <IconButton
-                                className={classes.toolbarIcon}
-                                aria-label=""
-                                edge="start">
-                                <ArrowDropDownIcon />
-                            </IconButton>
-                            <IconButton
-                                className={classes.toolbarIcon}
-                                aria-label=""
-                                edge="start">
-                                <RefreshIcon />
-                            </IconButton>
-                            <IconButton
-                                className={classes.toolbarIcon}
-                                aria-label=""
-                                edge="start">
-                                <MoreVertIcon />
-                            </IconButton>
+                            {(emailIsSelected) ? (
+                                <IconButton
+                                    className={classes.toolbarIcon}
+                                    aria-label=""
+                                    edge="start"
+                                    onClick={handleDeleteEmailIcon}>
+                                    <DeleteIcon />
+                                </IconButton>
+                            ) : (
+                                <>
+                                    <IconButton
+                                        className={classes.toolbarIcon}
+                                        aria-label=""
+                                        edge="start">
+                                        <ArrowDropDownIcon />
+                                    </IconButton>
+                                    <IconButton
+                                        className={classes.toolbarIcon}
+                                        aria-label=""
+                                        edge="start">
+                                        <RefreshIcon />
+                                    </IconButton>
+                                    <IconButton
+                                        className={classes.toolbarIcon}
+                                        aria-label=""
+                                        edge="start">
+                                        <MoreVertIcon />
+                                    </IconButton>
+                                </>
+                            )}
+                            
                         </TableCell>
                         <TableCell className={classes.hideOnSM} align="right"></TableCell>
                         <TableCell align="right">
@@ -129,12 +178,14 @@ const EmailTable = (props: IProps) => {
                         </TableCell>
                     </TableRow>
 
-                    {emails.map((email) => (
-                        <TableRow className={classes.emailTableRow} key={email.id} data-testid="emailRow">
+                    {emails.map((email, emailIndex) => (
+                        <TableRow className={[classes.emailTableRow, (email.checked) ? classes.selectedEmailRow : ''].join(' ')} key={email.id} data-testid="emailRow">
                             <TableCell component="th" scope="row">
                                 <Checkbox
                                     className={classes.checkbox}
                                     color="primary"
+                                    checked={email.checked}
+                                    onChange={(_event: any, checked: boolean) => handleCheckEmail(checked, emailIndex)}
                                 />
                                 <IconButton
                                     className={classes.starIcon}

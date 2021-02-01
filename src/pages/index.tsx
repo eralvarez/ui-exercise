@@ -1,4 +1,4 @@
-import {GetServerSideProps} from 'next';
+import { GetStaticProps } from 'next';
 
 import Layout from '@shared/components/layout/Layout';
 import EmailTable from '@shared/components/email-table/EmailTable';
@@ -18,7 +18,7 @@ const Index = (props: IProps) => {
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async (_context) => {
+export const getStaticProps: GetStaticProps = async () => {
     const emails = await emailService.getEmails();
     const emailTags = await emailService.getEmailTags();
 

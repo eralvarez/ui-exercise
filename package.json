@@ -4,6 +4,7 @@
   "scripts": {
     "start:dev": "next dev",
     "build": "next build --debug",
+    "export": "next export && touch ./out/.nojekyll",
     "start": "next start",
     "lint": "eslint --ext .ts,.tsx src/",
     "lint:fix": "eslint --ext .ts,.tsx src/ --fix",
